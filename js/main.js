@@ -45,10 +45,8 @@ Vue.component('fill', {
         <p>
             <input type="submit" value="Add a card">
         </p>
+        <columns></columns>
     </form>
-    <div>
-        <p ></p>
-    </div>
     `,
     data() {
         return{
@@ -67,7 +65,7 @@ Vue.component('fill', {
     },
     methods:{
         onSubmit(){
-            let cards = {
+            let card = {
                 title: this.title,
                 t1: this.t1,
                 t2: this.t2,
@@ -75,12 +73,14 @@ Vue.component('fill', {
                 t4: this.t4,
                 t5: this.t5,
             }
-            this.$emit('card-submitted', cards)
+            this.$emit('card-submitted', card)
+            this.title = null
             this.t1 = null
             this.t2 = null
             this.t3 = null
             this.t4 = null
             this.t5 = null
+            console.log(card)
         }
     }
 })
@@ -93,7 +93,9 @@ Vue.component('columns', {
     },
     templates:`
         <div>
-        <p></p>
+            <ul>
+                <li v-for="col in col1">{{ col }}</li> 
+            </ul>
         </div>
     `,
     data() {
@@ -103,9 +105,9 @@ Vue.component('columns', {
             col3:[]
         }
     },
-    computed:{
+    methods:{
         arr(){
-            this.col1.push('@card-submitted')
+            this.col1.push(card)
         }
     }
 })
