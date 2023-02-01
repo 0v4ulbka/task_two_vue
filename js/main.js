@@ -1,53 +1,56 @@
 let eventBus = new Vue()
 
 Vue.component('fill', {
+    props: {
+
+    },
     template: `
-    <form @submit.prevent="onSubmit">
-        <p> 
-            <b>Title</b>
-            <label>
-            <input type="text" v-model="title" placeholder="title">
-            </label>
-        </p>
-        <p>
-            <label>
-            <input type="checkbox" >
-            <input type="text" v-model="t1" placeholder="subtask"> 
-            </label>
-        </p>
-        
-        <p>
-            <label>
-            <input type="checkbox" >
-            <input type="text" v-model="t2" placeholder="subtask">
-            </label>
-        </p>
-            
-        <p>
-            <label>
-            <input type="checkbox"  >
-            <input type="text" v-model="t3" placeholder="subtask">
-            </label>
-        </p>
-            
-        <p>
-            <label>
-            <input type="checkbox" >
-            <input type="text" v-model="t4" placeholder="subtask">
-            </label>
-        </p>
-            
-        <p>
-            <label>
-            <input type="checkbox" >
-            <input type="text" v-model="t5" placeholder="subtask">
-            </label>
-        </p>
-        
-        <p>
-            <input type="submit" value="Add a card">
-        </p>
-    </form>
+    <div>
+        <form @submit.prevent="onSubmit">
+            <p> 
+                <b>Title</b>
+                <label>
+                <input required type="text" v-model="title" placeholder="title">
+                </label>
+            </p>
+            <ul>
+                <li>
+                    <label>
+                    <input required type="text" v-model="t1" placeholder="subtask"> 
+                    </label>
+                </li>
+                
+                <li>
+                    <label>
+                    <input required type="text" v-model="t2" placeholder="subtask">
+                    </label>
+                </li>
+                    
+                <li>
+                    <label>
+                    <input required type="text" v-model="t3" placeholder="subtask">
+                    </label>
+                </li>
+                    
+                <li>
+                    <label>
+                    <input type="text" v-model="t4" placeholder="subtask">
+                    </label>
+                </li>
+                    
+                <li >
+                    <label>
+                    <input type="text" v-model="t5" placeholder="subtask">
+                    </label>
+                </li>
+                
+                <p>
+                    <input type="submit" value="Add a card">
+                </p>
+            </ul>
+        </form>
+                   
+    </div>
     `,
     data() {
         return{
@@ -63,7 +66,11 @@ Vue.component('fill', {
         onSubmit(){
             let card = {
                 title: this.title,
-                t: [this.t1, this.t2, this.t3, this.t4, this.t5,]
+                t: [{title: this.t1, completed: false},
+                    {title: this.t2, completed: false},
+                    {title: this.t3, completed: false},
+                    {title: this.t4, completed: false},
+                    {title: this.t5, completed: false}]
             }
             eventBus.$emit('card-submitted', card)
             this.title = null
@@ -93,26 +100,51 @@ Vue.component('columns', {
     template:`
     <div id="cols">
         <fill></fill>
+        <p v-if="errors.length"
+        v-for="error in errors">
+            {{ error }}
+        </p>
         <div class="col">
-        
+            <h2>Stage 1</h2>
+                <div class="card" 
+                v-for="column1 in col1"
+                >
+                    <p>{{ column1.title }}</p>
+                    <label v-for="task in column1.t"
+                    v-if="task.title != null">
+                        <p>
+                            <input type="checkbox" @click="task.completed = true" :disabled="task.completed">
+                            {{ task.title }}
+                        </p>
+                    </label>
+                </div>
         </div>
-        <div class="col">{{ col2 }}</div>
-        <div class="col">{{ col3 }}</div>
+        <div class="col">
+        <h2>Stage 2</h2>
+        {{ col2 }}</div>
+        <div class="col">
+        <h2>Task completed</h2>
+        {{ col3 }}</div>
     </div>
     `,
     data() {
         return {
-            col1:[0],
-            col2:[123],
-            col3:[66]
+            col1:[],
+            col2:[],
+            col3:[],
+            errors:[]
         }
     },
     methods:{
 
     },
+
     mounted() {
         eventBus.$on('card-submitted', card => {
-            this.col1.push(card)
+
+            if (this.col1.length < 3){
+                this.col1.push(card)
+            } else {this.errors.push('You can\'t add more')}
         })
     }
 })
