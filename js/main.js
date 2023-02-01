@@ -1,3 +1,5 @@
+let eventBus = new Vue()
+
 Vue.component('fill', {
     template: `
     <form @submit.prevent="onSubmit">
@@ -9,35 +11,35 @@ Vue.component('fill', {
         </p>
         <p>
             <label>
-            <input type="checkbox" v-model="ch1">
+            <input type="checkbox" >
             <input type="text" v-model="t1" placeholder="subtask"> 
             </label>
         </p>
         
         <p>
             <label>
-            <input type="checkbox" v-model="ch2" >
+            <input type="checkbox" >
             <input type="text" v-model="t2" placeholder="subtask">
             </label>
         </p>
             
         <p>
             <label>
-            <input type="checkbox" v-model="ch3" >
+            <input type="checkbox"  >
             <input type="text" v-model="t3" placeholder="subtask">
             </label>
         </p>
             
         <p>
             <label>
-            <input type="checkbox" v-model="ch4" >
+            <input type="checkbox" >
             <input type="text" v-model="t4" placeholder="subtask">
             </label>
         </p>
             
         <p>
             <label>
-            <input type="checkbox" v-model="ch5" >
+            <input type="checkbox" >
             <input type="text" v-model="t5" placeholder="subtask">
             </label>
         </p>
@@ -45,17 +47,11 @@ Vue.component('fill', {
         <p>
             <input type="submit" value="Add a card">
         </p>
-        <columns></columns>
     </form>
     `,
     data() {
         return{
             title: null,
-            ch1: null,
-            ch2: null,
-            ch3: null,
-            ch4: null,
-            ch5: null,
             t1: null,
             t2: null,
             t3: null,
@@ -67,13 +63,9 @@ Vue.component('fill', {
         onSubmit(){
             let card = {
                 title: this.title,
-                t1: this.t1,
-                t2: this.t2,
-                t3: this.t3,
-                t4: this.t4,
-                t5: this.t5,
+                t: [this.t1, this.t2, this.t3, this.t4, this.t5,]
             }
-            this.$emit('card-submitted', card)
+            eventBus.$emit('card-submitted', card)
             this.title = null
             this.t1 = null
             this.t2 = null
@@ -87,28 +79,41 @@ Vue.component('fill', {
 
 Vue.component('columns', {
     props:{
-        card:{
-            type: Object
-        }
+        card: {
+            title: {
+                type: Text,
+                required: true
+            },
+            t: {
+                type: Array,
+                required: true,
+            }
+        },
     },
-    templates:`
-        <div>
-            <ul>
-                <li v-for="col in col1">{{ col }}</li> 
-            </ul>
+    template:`
+    <div id="cols">
+        <fill></fill>
+        <div class="col">
+        
         </div>
+        <div class="col">{{ col2 }}</div>
+        <div class="col">{{ col3 }}</div>
+    </div>
     `,
     data() {
         return {
-            col1:[],
-            col2:[],
-            col3:[]
+            col1:[0],
+            col2:[123],
+            col3:[66]
         }
     },
     methods:{
-        arr(){
+
+    },
+    mounted() {
+        eventBus.$on('card-submitted', card => {
             this.col1.push(card)
-        }
+        })
     }
 })
 
