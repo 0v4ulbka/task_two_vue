@@ -120,7 +120,7 @@ Vue.component('card', {
     },
     template:`
         <div class="card">
-             <p><b>Title: </b>{{ card.title }}</p>
+             <p v-for=""><b>Title: </b>{{ card.title }}</p>
              <label v-for="task in tasks"
                     v-if="task.text != null">
                     <p :class="{ completed:task.completed }">
@@ -132,12 +132,19 @@ Vue.component('card', {
     `,
     data() {
         return{
-
+            column1:[],
         }
     },
     methods:{
 
+    },
+    mounted(){
+        eventBus.$on('card-submitted', card => {
+            this.column1.push(card)
+            console.log(this.column1)
+        })
     }
+
 })
 
 
