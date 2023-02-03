@@ -206,6 +206,7 @@ Vue.component('col1', {
             }
 
             if (card.status / length * 100 === 100){
+                card.date = new Date().toLocaleString()
                 eventBus.$emit('to-column1-3', card)
             }
         },
