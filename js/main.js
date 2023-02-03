@@ -22,6 +22,7 @@ Vue.component('columns', {
             column1:[],
             column2:[],
             column3:[],
+
         }
     },
     methods:{
@@ -30,10 +31,10 @@ Vue.component('columns', {
     mounted(){
         eventBus.$on('card-submitted', card =>{
             this.errors = []
-            this.column1.push(card)
-            console.log(this.column1)
-            if (this.column1.length > 3){
-                this.errors.push('While you can\'t add new cards')
+            if (this.column1.length < 3 && this.column2.length < 5) {
+                this.column1.push(card)
+            } else {
+                this.errors.push('You can\'t add new cards now')
             }
         })
 
@@ -51,6 +52,11 @@ Vue.component('columns', {
             this.column3.push(card)
             this.column2.splice(this.column2.indexOf(card), 1)
         })
+
+        eventBus.$on('to-column1-3', card =>{
+            this.column3.push(card)
+            this.column1.splice(this.column2.indexOf(card), 1)
+        })
     },
 
 
@@ -62,11 +68,15 @@ Vue.component('fill', {
         column1: {
             type: Array,
             required: true
-        }
+        },
+        errors: {
+            type: Array,
+            required: true
+        },
     },
     template: `
     <div>
-        <form @submit.prevent="onSubmit" @click="block">
+        <form @submit.prevent="onSubmit" >
             <p> 
                 <b>Title</b>
                 <input required type="text" v-model="title" placeholder="title">
@@ -124,13 +134,8 @@ Vue.component('fill', {
             this.t3 = null
             this.t4 = null
             this.t5 = null
-            console.log(card)
-        },
-        block(){
-            if (this.column1.length > 3){
 
-            }
-        }
+        },
     }
 })
 
@@ -144,16 +149,19 @@ Vue.component('col1', {
             type: Object,
             required: true
         },
+        errors: {
+            type: Array
+        }
     },
     template:`
         <div>
             <h2>Stage 1</h2>
-            <div v-for="card in column1">
+            <div v-for="card in column1" :disabled="block">
                 <p><b>Title: </b>{{ card.title }}</p>
                 <ul v-for="task in card.tasks"
                     v-if="task.text != null">
                     <li :class="{ completed:task.completed }" 
-                    @click="updateStage(task, card)" 
+                    @click="updateStage(task, card)"
                     :disabled="task.completed">
                     {{ task.text }}
                     </li>
@@ -161,10 +169,24 @@ Vue.component('col1', {
             </div>
         </div>
     `,
+    data(){
+        return{
+            block: false
+        }
+    },
+
+    computed:{
+        blocked(){
+            if (this.errors.length === 2) {
+                this.block = true
+            }
+        }
+
+    },
     methods:{
         updateStage(task, card){
             task.completed = true
-            card.status += 1
+            card.status = 0
             let length = 0
 
             for (let i = 0; i < 5; i++){
@@ -173,12 +195,21 @@ Vue.component('col1', {
                 }
             }
 
+            for( let i = 0; i<5; i++){
+                if (card.tasks[i].completed === true){
+                    card.status++
+                }
+            }
+
             if (card.status / length * 100 >=50 ){
                 eventBus.$emit('to-column2', card)
             }
 
+            if (card.status / length * 100 === 100){
+                eventBus.$emit('to-column1-3', card)
+            }
+        },
 
-        }
 
     }
 })
@@ -213,12 +244,18 @@ Vue.component('col2', {
     methods:{
         updateStage(task, card) {
             task.completed = true
-            card.status += 1
+            card.status = 0
             let length = 0
 
             for (let i = 0; i < 5; i++){
                 if (card.tasks[i].text != null){
                     length++
+                }
+            }
+
+            for( let i = 0; i<5; i++){
+                if (card.tasks[i].completed === true){
+                    card.status++
                 }
             }
 
@@ -250,12 +287,11 @@ Vue.component('col3', {
                 <p><b>Title: </b>{{ card.title }}</p>
                 <ul v-for="task in card.tasks"
                     v-if="task.text != null">
-                    <li :class="{ completed:task.completed }" 
-                    @click="updateStage(task, card)" 
-                    :disabled="task.completed">
+                    <li :class="{ completed:task.completed }">
                     {{ task.text }}
                     </li>
                  </ul>
+                 <p><b>Date, time: </b>{{ card.date }}</p>
             </div>
         </div>
     `,
