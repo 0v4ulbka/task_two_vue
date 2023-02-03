@@ -31,7 +31,7 @@ Vue.component('columns', {
     mounted(){
         eventBus.$on('card-submitted', card =>{
             this.errors = []
-            if (this.column1.length < 3 && this.column2.length < 5) {
+            if (this.column1.length < 3) {
                 this.column1.push(card)
             } else {
                 this.errors.push('You can\'t add new cards now')
