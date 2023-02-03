@@ -125,7 +125,8 @@ Vue.component('fill', {
                     {text: this.t3, completed: false},
                     {text: this.t4, completed: false},
                     {text: this.t5, completed: false}],
-                date: new Date().toLocaleString(),
+                dateC: new Date().toLocaleString(),
+                dateE: null,
                 status: 0,
             }
             eventBus.$emit('card-submitted', card)
@@ -135,7 +136,6 @@ Vue.component('fill', {
             this.t3 = null
             this.t4 = null
             this.t5 = null
-            this.date = null
 
         },
     }
@@ -169,7 +169,6 @@ Vue.component('col1', {
                     {{ task.text }}
                     </li>
                  </ul>
-                 <p class="font"><b>Date and time of creation: </b><br>{{ card.date }}</p>
             </div>
         </div>
     `,
@@ -265,7 +264,7 @@ Vue.component('col2', {
             }
 
             if (card.status / length * 100 === 100 ){
-                card.date = new Date().toLocaleString()
+                card.dateE = new Date().toLocaleString()
                 eventBus.$emit('to-column3', card)
             }
         }
@@ -296,7 +295,8 @@ Vue.component('col3', {
                     {{ task.text }}
                     </li>
                  </ul>
-                 <p class="font"><b>Date and time of execution </b>{{ card.date }}</p>
+                 <p class="font"><b>Date and time of creation: </b><br>{{ card.dateC }}</p>
+                 <p class="font"><b>Date and time of execution </b><br>{{ card.dateE }}</p>
             </div>
         </div>
     `,
