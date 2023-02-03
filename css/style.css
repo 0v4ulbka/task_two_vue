@@ -15,3 +15,8 @@
 li{
     list-style-type: none;
 }
+
+.font{
+    font-size: 7pt;
+    color: rgba(0, 0, 0, 0.75);
+}

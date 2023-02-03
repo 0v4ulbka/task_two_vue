@@ -33,6 +33,7 @@ Vue.component('columns', {
             this.errors = []
             if (this.column1.length < 3) {
                 this.column1.push(card)
+                console.log()
             } else {
                 this.errors.push('You can\'t add new cards now')
             }
@@ -124,7 +125,7 @@ Vue.component('fill', {
                     {text: this.t3, completed: false},
                     {text: this.t4, completed: false},
                     {text: this.t5, completed: false}],
-                date: null,
+                date: new Date().toLocaleString(),
                 status: 0,
             }
             eventBus.$emit('card-submitted', card)
@@ -134,6 +135,7 @@ Vue.component('fill', {
             this.t3 = null
             this.t4 = null
             this.t5 = null
+            this.date = null
 
         },
     }
@@ -152,6 +154,7 @@ Vue.component('col1', {
         errors: {
             type: Array
         }
+
     },
     template:`
         <div>
@@ -166,6 +169,7 @@ Vue.component('col1', {
                     {{ task.text }}
                     </li>
                  </ul>
+                 <p class="font"><b>Date and time of creation: </b><br>{{ card.date }}</p>
             </div>
         </div>
     `,
@@ -292,7 +296,7 @@ Vue.component('col3', {
                     {{ task.text }}
                     </li>
                  </ul>
-                 <p><b>Date, time: </b>{{ card.date }}</p>
+                 <p class="font"><b>Date and time of execution </b>{{ card.date }}</p>
             </div>
         </div>
     `,
